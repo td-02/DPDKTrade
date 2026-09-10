@@ -107,20 +107,24 @@ private:
 
     [[nodiscard]] static constexpr std::uint64_t read_u64(const std::uint8_t* bytes, std::size_t offset) noexcept
     {
-        std::uint64_t value = 0;
-        for (std::size_t index = 0; index < sizeof(std::uint64_t); ++index)
-        {
-            value |= static_cast<std::uint64_t>(bytes[offset + index]) << (index * 8U);
-        }
-        return value;
+        const std::uint8_t* const field = bytes + offset;
+        return static_cast<std::uint64_t>(field[0]) | (static_cast<std::uint64_t>(field[1]) << 8U) |
+               (static_cast<std::uint64_t>(field[2]) << 16U) | (static_cast<std::uint64_t>(field[3]) << 24U) |
+               (static_cast<std::uint64_t>(field[4]) << 32U) | (static_cast<std::uint64_t>(field[5]) << 40U) |
+               (static_cast<std::uint64_t>(field[6]) << 48U) | (static_cast<std::uint64_t>(field[7]) << 56U);
     }
 
     static constexpr void write_u64(std::uint8_t* bytes, std::size_t offset, std::uint64_t value) noexcept
     {
-        for (std::size_t index = 0; index < sizeof(std::uint64_t); ++index)
-        {
-            bytes[offset + index] = static_cast<std::uint8_t>((value >> (index * 8U)) & 0xFFU);
-        }
+        std::uint8_t* const field = bytes + offset;
+        field[0] = static_cast<std::uint8_t>(value & 0xFFU);
+        field[1] = static_cast<std::uint8_t>((value >> 8U) & 0xFFU);
+        field[2] = static_cast<std::uint8_t>((value >> 16U) & 0xFFU);
+        field[3] = static_cast<std::uint8_t>((value >> 24U) & 0xFFU);
+        field[4] = static_cast<std::uint8_t>((value >> 32U) & 0xFFU);
+        field[5] = static_cast<std::uint8_t>((value >> 40U) & 0xFFU);
+        field[6] = static_cast<std::uint8_t>((value >> 48U) & 0xFFU);
+        field[7] = static_cast<std::uint8_t>((value >> 56U) & 0xFFU);
     }
 };
 } // namespace dpdktrade::engine

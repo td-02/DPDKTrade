@@ -112,6 +112,8 @@ int main()
     const auto engine_order = engine.on_market(engine_market);
     assert(engine_order.has_value());
     assert(engine_order->ethertype == wire::ETHERTYPE_ORDER);
+    assert(engine_order->payload[1] == 0x64U);
+    assert(engine_order->payload[9] == 0x96U);
     assert(engine.stats().total == 1U);
 
     wire::MarketFrame invalid_market{};
